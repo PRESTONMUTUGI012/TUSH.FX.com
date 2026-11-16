@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>EHALDART GLOBAL FX & BINARY | 32-MARKET STABLE TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: { colors: { darker: '#030712', cardbg: '#0d1b2a', accent: '#10b981', gold: '#FFD700', fxgreen: '#00ff88', fxyellow: '#FFD700' } }
+            }
+        }
+    </script>
+    <style>
+        .fx-glow { text-shadow: 0 0 35px rgba(0, 255, 136, 0.75); }
+        .wallpaper-bg { background-color: #030712; background-image: radial-gradient(circle at 50% 20%, rgba(0, 255, 136, 0.12) 0%, transparent 55%), radial-gradient(circle at 15% 85%, rgba(0, 168, 255, 0.1) 0%, transparent 45%); }
+        .trading-grid-bg { background-image: linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px); background-size: 24px 24px; }
+    </style>
+</head>
+<body class="wallpaper-bg trading-grid-bg text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <!-- SPLASH LOADING SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 z-50 bg-[#030712] flex flex-col items-center justify-between p-6 transition-opacity duration-500 overflow-y-auto">
+        <div class="w-full max-w-lg mx-auto flex flex-col items-center text-center space-y-8 my-auto py-10">
+            <div class="space-y-3">
+                <div class="text-3xl sm:text-5xl font-black tracking-wider text-cyan-400 fx-glow uppercase leading-none">
+                    EHALDART <span class="text-white">GLOBAL</span>
+                </div>
+                <div class="flex items-center justify-center space-x-3 text-2xl sm:text-4xl font-black text-white tracking-widest">
+                    <span>FX & BINARY</span>
+                    <span class="text-fxgreen text-4xl sm:text-6xl fx-glow">FX</span>
+                </div>
+                <div class="text-xs sm:text-sm font-mono tracking-[0.2em] text-slate-300 uppercase pt-2 border-t border-slate-800">
+                    32-MARKET STABLE SUITE | BY PRESTON MUTUGI
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-950/95 border-2 border-fxgreen/60 rounded-3xl p-6 shadow-[0_0_50px_rgba(0,255,136,0.3)] space-y-4 backdrop-blur-xl">
+                <div class="text-xs font-mono text-gold font-bold uppercase tracking-wider">
+                    🔒 PERMANENT AFFILIATE OAUTH GATEWAY
+                </div>
+                <p class="text-xs text-slate-300 font-mono">
+                    Register and connect securely via your official affiliate link to unlock automated 5-7 run scalping across all 32 markets with permanent commission tracking.
+                </p>
+                <button onclick="authDeriv()" class="w-full bg-gradient-to-r from-emerald-500 to-fxgreen hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black py-4 rounded-2xl uppercase text-sm tracking-wider shadow-[0_0_30px_rgba(0,255,136,0.5)] transition flex items-center justify-center space-x-2">
+                    <span>🚀 SIGN UP / REGISTER VIA AFFILIATE OAUTH</span>
+                </button>
+            </div>
+
+            <div class="w-full space-y-2.5">
+                <div class="text-xs font-mono text-gold font-bold animate-pulse">
+                    👋 Initializing Zero-Jumping 32-Market Engine...
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-2.5 border border-slate-800 overflow-hidden">
+                    <div id="splash-progress-bar" class="bg-gradient-to-r from-cyan-400 via-fxgreen to-gold h-full w-0 transition-all duration-300"></div>
+                </div>
+                <div class="text-[11px] font-mono text-slate-400" id="splash-countdown-text">
+                    Loading Institutional Suite...
+                </div>
+            </div>
+
+            <div class="w-full space-y-2">
+                <button onclick="dismissSplash()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white font-bold py-3 rounded-xl uppercase text-xs tracking-wider border border-slate-700 transition">
+                    Skip Splash & Enter Terminal ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIGNAL & BOT ARCHITECTURE MODAL -->
+    <div id="deriv-setup-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="max-w-xl w-full bg-slate-900 border-2 border-gold rounded-3xl p-6 shadow-2xl space-y-4 font-mono">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-gold">🤖 32-Market Scalper & Affiliate Guide</h3>
+                    <span class="text-[10px] text-slate-400">Courtesy of Preston Mutugi</span>
+                </div>
+                <button onclick="toggleDerivSetupModal(false)" class="text-slate-400 hover:text-white font-bold text-sm">✕</button>
+            </div>
+            <div class="space-y-3 text-xs text-slate-300 max-h-[380px] overflow-y-auto pr-2">
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="text-fxgreen font-bold">1. Zero-Jumping Rotational Queue</div>
+                    <p class="text-[11px] text-slate-400">Signals lock in for clean 5-7 run holdings across Over/Under (0-9), Rise/Fall, Even/Odd, Accumulators (1-5%), Multipliers, and Matches/Differs.</p>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="text-gold font-bold">2. Milliticks vs Ticks Toggle</div>
+                    <p class="text-[11px] text-slate-400">Instantly switch between standard ticks and milliticks speed using the dedicated toggle in the live stream panel.</p>
+                </div>
+            </div>
+            <button onclick="toggleDerivSetupModal(false)" class="w-full bg-gold hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl uppercase text-xs transition shadow-[0_0_15px_rgba(255,215,0,0.4)]">
+                GOT IT • LAUNCH TERMINAL
+            </button>
+        </div>
+    </div>
+
+    <!-- PROFIT NOTIFICATION BANNER -->
+    <div id="profit-toast-banner" class="fixed top-20 right-6 z-45 transform translate-x-full opacity-0 transition-all duration-500 pointer-events-none">
+        <div class="bg-slate-950/95 border-2 border-emerald-500 rounded-2xl p-4 shadow-[0_0_35px_rgba(0,255,136,0.4)] backdrop-blur-xl flex items-center space-x-3.5">
+            <div class="bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/40 text-fxgreen text-lg">📉 ✅</div>
+            <div>
+                <div class="text-[10px] font-mono font-bold tracking-widest text-fxgreen uppercase">COURTESY OF PRESTON MUTUGI 📉 ✅</div>
+                <div id="profit-toast-details" class="text-xs font-bold text-white mt-0.5">Take Profit Hit • Execution Secured</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 bg-fxgreen rounded-full animate-ping"></div>
+            <div>
+                <span class="font-black tracking-widest text-cyan-400 text-sm block">EHALDART GLOBAL FX & BINARY</span>
+                <span id="header-asset-count" class="text-[10px] font-mono text-fxgreen">Loading 32-Market Scalper...</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3 flex-wrap">
+            <button onclick="toggleDerivSetupModal(true)" class="bg-gold/20 hover:bg-gold text-gold hover:text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl border border-gold/40 transition">
+                📖 Signal Guide
+            </button>
+            <span id="oauth-connection-badge" class="text-[10px] font-mono font-bold text-amber-300 bg-slate-900 px-2.5 py-1 rounded border border-slate-700">🔌 Simulation Mode</span>
+            <button onclick="toggleTerminalAudio()" class="bg-slate-900 hover:bg-slate-800 text-fxgreen text-xs font-mono font-bold px-3 py-1.5 rounded-xl border border-fxgreen/30">
+                <span id="audio-status-icon">🔊</span> <span id="audio-status-text">SFX ON</span>
+            </button>
+            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+                <button id="btn-demo" onclick="setMode('demo')" class="px-3 py-1 rounded-lg font-bold bg-emerald-600 text-white transition">DEMO</button>
+                <button id="btn-real" onclick="setMode('real')" class="px-3 py-1 rounded-lg font-semibold text-slate-400 hover:text-white transition">REAL</button>
+            </div>
+            <div class="text-right">
+                <div id="account-id-label" class="text-[10px] text-slate-400 uppercase font-mono">Demo Balance</div>
+                <div id="account-balance" class="text-sm font-bold font-mono text-emerald-400">$1,000.00</div>
+            </div>
+            <button onclick="authDeriv()" id="btn-oauth-connect" class="bg-gradient-to-r from-emerald-500 to-fxgreen hover:from-emerald-400 hover:to-emerald-300 text-slate-950 text-xs font-black px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,255,136,0.3)] flex items-center space-x-1.5">
+                <span>👤 Sign Up / Register (Affiliate)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <main class="flex-1 max-w-[1680px] w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- COLUMN 1: SIDE SIGNAL BOX + 32-MARKET SCALPING SCANNER -->
+        <div class="space-y-6">
+            <div class="bg-slate-950/95 backdrop-blur-xl border-2 border-fxgreen rounded-2xl p-4 shadow-[0_0_25px_rgba(0,255,136,0.2)] space-y-3 font-mono relative">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-base">🚦</span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-fxgreen">Side Signal Box</h2>
+                    </div>
+                    <span id="side-signal-live-badge" class="text-[9px] font-black bg-fxgreen text-slate-950 px-2 py-0.5 rounded animate-pulse">5-7 RUNS A+</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                        <div class="text-[9px] text-slate-400 uppercase">Asset</div>
+                        <div id="side-sig-asset" class="text-white font-bold truncate">NVDA</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                        <div class="text-[9px] text-slate-400 uppercase">Contract / Option</div>
+                        <div id="side-sig-contract" class="text-gold font-bold truncate">OVER 4</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                        <div class="text-[9px] text-slate-400 uppercase">Candle (1m-15m)</div>
+                        <div id="side-sig-candle" class="text-cyan-400 font-bold">5 Min (300s)</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                        <div class="text-[9px] text-slate-400 uppercase">Holding Ticks</div>
+                        <div id="side-sig-ticks" class="text-white font-bold">5-10 Ticks</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded-xl border border-emerald-500/40">
+                        <div class="text-[9px] text-fxgreen uppercase font-bold">Feeder Digit</div>
+                        <div id="side-sig-feeder" class="text-fxgreen font-black text-xs">Digit [4]</div>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded-xl border border-gold/40">
+                        <div class="text-[9px] text-gold uppercase font-bold">Target Runs</div>
+                        <div id="side-sig-runs" class="text-gold font-black text-xs">0 / 6 Runs</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-[10px]">
+                    <span class="text-slate-400">Site Boat Match:</span>
+                    <span id="side-sig-boat" class="text-cyan-300 font-bold">Boat 8 (Matrixer)</span>
+                </div>
+
+                <div id="side-feeder-trigger-bar" class="bg-emerald-950/60 border border-fxgreen/60 rounded-xl px-2.5 py-1.5 text-center text-[10px] font-bold text-fxgreen">
+                    🔥 Zero-Jumping 32-Market Scan Active...
+                </div>
+
+                <button onclick="copySideSignalSettings()" class="w-full bg-gold hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-[10px] uppercase transition shadow-[0_0_12px_rgba(255,215,0,0.35)]">
+                    📋 Copy Signal for Deriv Bot
+                </button>
+            </div>
+
+            <!-- UNIVERSAL ASSET RADAR -->
+            <div class="bg-slate-950/85 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 shadow-2xl space-y-3 relative">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300">Universal Asset Radar</h2>
+                    <span class="text-[10px] font-mono text-fxgreen">32-Market Scalper</span>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-1 text-[10px] font-mono">
+                    <button onclick="switchCategory('all')" id="cat-all" class="bg-emerald-600 text-white font-bold py-1.5 px-1 rounded-lg transition">All</button>
+                    <button onclick="switchCategory('stocks')" id="cat-stocks" class="bg-slate-900 text-slate-300 hover:text-white py-1.5 px-1 rounded-lg transition border border-slate-800">Stocks</button>
+                    <button onclick="switchCategory('forex')" id="cat-forex" class="bg-slate-900 text-slate-300 hover:text-white py-1.5 px-1 rounded-lg transition border border-slate-800">Forex</button>
+                    <button onclick="switchCategory('commodities')" id="cat-commodities" class="bg-slate-900 text-slate-300 hover:text-white py-1.5 px-1 rounded-lg transition border border-slate-800">Commodity</button>
+                    <button onclick="switchCategory('synthetic_index')" id="cat-synthetic_index" class="bg-slate-900 text-slate-300 hover:text-white py-1.5 px-1 rounded-lg transition border border-slate-800">Synthetics</button>
+                    <button onclick="switchCategory('cryptocurrency')" id="cat-cryptocurrency" class="bg-slate-900 text-slate-300 hover:text-white py-1.5 px-1 rounded-lg transition border border-slate-800">Crypto</button>
+                </div>
+
+                <div class="grid grid-cols-3 text-[10px] font-mono text-slate-400 border-b border-slate-800 pb-1 px-1 pt-1">
+                    <div>ASSET & TF</div>
+                    <div class="text-right">PRICE & CONTRACT</div>
+                    <div class="text-right">FEEDER / SIG</div>
+                </div>
+                <div id="scanner-market-list" class="space-y-1.5 max-h-[260px] overflow-y-auto text-[11px] font-mono">
+                    <div class="text-fxgreen text-center py-4 animate-pulse">Scanning 32 Markets...</div>
+                </div>
+            </div>
+
+            <!-- USD Multi-Currency Converter -->
+            <div class="bg-slate-950/85 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 shadow-2xl space-y-3">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300">USD Multi-Currency Converter</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="conv-amt" type="number" value="100" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                    <select id="conv-curr" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                        <option value="KES">KES (Kenya)</option>
+                        <option value="UGX">UGX (Uganda)</option>
+                        <option value="TZS">TZS (Tanzania)</option>
+                        <option value="EUR">EUR (Euro)</option>
+                        <option value="GBP">GBP (Pound)</option>
+                    </select>
+                </div>
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex justify-between text-xs">
+                    <span class="text-slate-400">Equivalent:</span>
+                    <span id="conv-result" class="font-mono font-bold text-fxgreen">12,900.00 KES</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 2 & 3: TRADINGVIEW CHART + BULK & MANUAL TRADING CENTER -->
+        <div class="lg:col-span-2 space-y-6">
+            <div id="chart-card-wrapper" class="bg-slate-950/85 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-4 shadow-2xl space-y-3 transition-all duration-300">
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <h2 id="chart-title-label" class="text-xs font-bold uppercase tracking-wider text-fxgreen">TradingView Institutional Suite</h2>
+                        <span id="chart-sub-label" class="text-[10px] font-mono text-slate-400">32-Market Scalping Engine (1M-15M Defaults)</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleChartFullscreen()" id="expand-chart-btn" class="bg-emerald-600/20 hover:bg-emerald-600 text-fxgreen hover:text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border border-emerald-500/40 transition flex items-center space-x-1">
+                            <span>⛶</span> <span id="expand-btn-text">Expand Chart</span>
+                        </button>
+                        <div class="flex flex-wrap space-x-1 text-[10px] font-mono">
+                            <button onclick="changeChartTimeframe('1')" class="tf-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 hover:border-fxgreen" data-tf="1">1m</button>
+                            <button onclick="changeChartTimeframe('5')" class="tf-btn px-2 py-1 rounded bg-emerald-600 text-white font-bold" data-tf="5">5m</button>
+                            <button onclick="changeChartTimeframe('15')" class="tf-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300 hover:border-fxgreen" data-tf="15">15m</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="chart-view-port" class="bg-slate-900 rounded-xl border border-slate-800 p-2 relative h-[250px] transition-all">
+                    <div id="tradingview_advanced_chart" class="w-full h-full"></div>
+                </div>
+            </div>
+
+            <!-- BULK & MANUAL TRADING CONTROL CENTER -->
+            <div class="bg-slate-950/85 backdrop-blur-xl border-2 border-gold rounded-2xl p-4 shadow-2xl space-y-4 font-mono">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-gold">⚡ Feeder-Triggered Bulk & Manual Scalping Hub</h2>
+                        <span class="text-[10px] text-slate-300">Over/Under (0-9), Rise/Fall, Even/Odd, Accumulators (1-5%), Multipliers, Matches/Differs</span>
+                    </div>
+                    <span id="bulk-manual-status-badge" class="text-[10px] font-bold text-slate-950 bg-gold px-2.5 py-1 rounded">5-7 RUNS READY</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- MANUAL TRADING SIGNAL-FED PANEL -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-emerald-500/40 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-fxgreen uppercase">🕹️ Manual Feeder-Triggered Execution</span>
+                            <span id="manual-sig-type" class="text-[9px] bg-emerald-950 text-fxgreen px-2 py-0.5 rounded border border-emerald-600 font-bold">STANDBY</span>
+                        </div>
+                        <div class="text-xs text-slate-300 space-y-1">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Target Asset:</span>
+                                <span id="manual-target-asset" class="text-white font-bold">NVDA</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Option / Setup:</span>
+                                <span id="manual-target-contract" class="text-gold font-bold">OVER 4 (5-7 Runs)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Feeder Trigger:</span>
+                                <span id="manual-target-feeder" class="text-cyan-300 font-bold">Digit [4] • 5 Ticks</span>
+                            </div>
+                        </div>
+                        <button id="btn-arm-manual" onclick="toggleManualFeederArm()" class="w-full bg-gradient-to-r from-emerald-500 to-fxgreen hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase transition shadow-[0_0_15px_rgba(0,255,136,0.4)] flex items-center justify-center space-x-1.5">
+                            <span>🚀 ARM & EXECUTE ON FEEDER HIT</span>
+                        </button>
+                    </div>
+
+                    <!-- BULK TRADING AUTOMATION PANEL -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-cyan-500/40 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-cyan-400 uppercase">📦 Bulk Feeder-Triggered Automation</span>
+                            <span id="bulk-sig-status" class="text-[9px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-600 font-bold">STANDBY</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400 text-[10px]">Bulk Stake ($):</span>
+                                <input id="bulk-stake-input" type="number" min="0.35" step="0.5" value="1.00" class="w-20 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-white font-bold text-xs text-right">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400 text-[10px]">Bulk Target Count:</span>
+                                <select id="bulk-count-select" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-white font-bold text-xs">
+                                    <option value="3">3 Top Assets</option>
+                                    <option value="5" selected>5 Top Assets</option>
+                                    <option value="10">10 Exhaustive Assets</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="btn-arm-bulk" onclick="toggleBulkFeederArm()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase transition shadow-[0_0_15px_rgba(0,168,255,0.4)] flex items-center justify-center space-x-1.5">
+                            <span>⚡ ARM BULK FEEDER EXECUTION</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 9-BOAT BASKET HUB -->
+                <div class="bg-slate-900/90 p-2.5 rounded-xl border border-gold/40 space-y-2">
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-gold font-bold uppercase">💼 Click Any Boat Below to Arm Millisecond Feeder Execution</span>
+                        <span id="dispatcher-wallet-active-label" class="text-fxgreen font-bold">Armed: Boat 8 (Over/Under)</span>
+                    </div>
+                    <div class="grid grid-cols-3 sm:grid-cols-9 gap-1.5 text-[9px] text-center">
+                        <button onclick="selectAndLaunchBoat(1)" id="wallet-boat-1" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B1</div><div class="text-[7px] text-slate-400 truncate">OB Snip</div></button>
+                        <button onclick="selectAndLaunchBoat(2)" id="wallet-boat-2" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B2</div><div class="text-[7px] text-slate-400 truncate">Rise/Fall</div></button>
+                        <button onclick="selectAndLaunchBoat(3)" id="wallet-boat-3" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B3</div><div class="text-[7px] text-slate-400 truncate">Sweep</div></button>
+                        <button onclick="selectAndLaunchBoat(4)" id="wallet-boat-4" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B4</div><div class="text-[7px] text-slate-400 truncate">FVG</div></button>
+                        <button onclick="selectAndLaunchBoat(5)" id="wallet-boat-5" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B5</div><div class="text-[7px] text-slate-400 truncate">Mult x100</div></button>
+                        <button onclick="selectAndLaunchBoat(6)" id="wallet-boat-6" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B6</div><div class="text-[7px] text-slate-400 truncate">Differ</div></button>
+                        <button onclick="selectAndLaunchBoat(7)" id="wallet-boat-7" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B7</div><div class="text-[7px] text-slate-400 truncate">Accu 1-5%</div></button>
+                        <button onclick="selectAndLaunchBoat(8)" id="wallet-boat-8" class="py-1.5 px-1 rounded-lg bg-emerald-950 border-2 border-fxgreen text-fxgreen font-bold shadow-[0_0_8px_rgba(0,255,136,0.4)] transition"><div class="font-bold">B8 ⭐</div><div class="text-[7px] text-gold">Over/Und</div></button>
+                        <button onclick="selectAndLaunchBoat(9)" id="wallet-boat-9" class="py-1.5 px-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:border-gold transition"><div class="font-bold">B9</div><div class="text-[7px] text-slate-400 truncate">Match</div></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 4: LIVE STREAM & AUTO-EXECUTION ROOM -->
+        <div class="space-y-6">
+            <div class="bg-slate-950/85 backdrop-blur-xl border border-emerald-500/50 rounded-2xl p-4 shadow-2xl space-y-3">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-fxgreen">Live Feeder Stream & Speed Toggle</h2>
+                        <span id="digit-active-mode-label" class="text-[10px] font-mono text-gold">Zero-Jumping 32-Market Engine</span>
+                    </div>
+                    <span id="streak-lock-badge" class="text-[10px] font-mono font-bold text-fxgreen bg-emerald-950 px-2 py-1 rounded border border-emerald-600">RUNS: 0/5-7</span>
+                </div>
+
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between gap-2 text-xs font-mono">
+                    <div class="flex items-center space-x-2">
+                        <label class="text-slate-400 text-[10px]">STAKE ($):</label>
+                        <input id="trade-stake-input" type="number" min="0.35" step="0.5" value="1.00" class="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-white font-bold text-xs">
+                    </div>
+                    <button id="toggle-scan-speed-btn" onclick="toggleFeederScanSpeed()" class="bg-slate-800 hover:bg-slate-700 text-fxgreen font-bold px-3 py-1.5 rounded-lg text-[10px] uppercase transition border border-fxgreen/40">
+                        ⚡ MODE: TICKS (STABLE)
+                    </button>
+                </div>
+
+                <div class="bg-slate-900/95 p-2.5 rounded-xl border border-slate-800 space-y-1.5 font-mono">
+                    <div class="flex justify-between items-center text-[9px] text-slate-400">
+                        <span>LIVE TICK & FEEDER STREAM</span>
+                        <span id="latest-hit-digit-badge" class="text-fxgreen font-bold">WAITING...</span>
+                    </div>
+                    <div id="live-digit-hit-stream" class="flex items-center justify-between gap-1 pt-1 overflow-x-auto">
+                        <span class="text-[10px] text-fxgreen py-1">Streaming live ticks & digits...</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-[11px] font-mono space-y-2">
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">Candle Timeframe:</span>
+                        <span class="text-gold font-bold text-right">1M - 15M (Default 5m)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">Holding Duration:</span>
+                        <span class="text-cyan-400 font-bold text-right">5 to 7 Runs (Long Hold)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 pb-1">
+                        <span class="text-slate-400">Feeder Evaluation:</span>
+                        <span class="text-fxgreen font-bold text-right">Digits 0-9 Balanced</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Jump Protection:</span>
+                        <span class="text-fxgreen font-bold text-right">🟢 Rotational Queue Lock</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MASTER BOAT BASKET HUB -->
+            <div class="bg-slate-950/85 backdrop-blur-xl border border-emerald-500/60 rounded-2xl p-4 shadow-2xl space-y-3">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-fxgreen">⚓ Master Boat Basket Hub</h2>
+                        <span class="text-[10px] font-mono text-gold">Click any boat to arm feeder-triggered 5-7 runs scalping</span>
+                    </div>
+                    <span id="active-basket-boat-badge" class="text-[10px] font-mono font-bold text-slate-950 bg-fxgreen px-2 py-0.5 rounded">BOAT 8 ARMED</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-[10px] font-mono">
+                    <button onclick="selectAndLaunchBoat(1)" id="boat-card-1" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 1</div><div class="text-[8px] text-slate-400">OB Sniper</div></button>
+                    <button onclick="selectAndLaunchBoat(2)" id="boat-card-2" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 2</div><div class="text-[8px] text-slate-400">Rise/Fall</div></button>
+                    <button onclick="selectAndLaunchBoat(3)" id="boat-card-3" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 3</div><div class="text-[8px] text-slate-400">Sweep Fade</div></button>
+                    <button onclick="selectAndLaunchBoat(4)" id="boat-card-4" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 4</div><div class="text-[8px] text-slate-400">FVG Rebal</div></button>
+                    <button onclick="selectAndLaunchBoat(5)" id="boat-card-5" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 5</div><div class="text-[8px] text-slate-400">Mult x100</div></button>
+                    <button onclick="selectAndLaunchBoat(6)" id="boat-card-6" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 6</div><div class="text-[8px] text-slate-400">Differ</div></button>
+                    <button onclick="selectAndLaunchBoat(7)" id="boat-card-7" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 7</div><div class="text-[8px] text-slate-400">Accu 1-5%</div></button>
+                    <button onclick="selectAndLaunchBoat(8)" id="boat-card-8" class="p-2 rounded-xl border bg-emerald-950 border-fxgreen text-left shadow-[0_0_10px_rgba(0,255,136,0.3)] transition"><div class="font-bold text-fxgreen">Boat 8 ⭐</div><div class="text-[8px] text-gold">Over/Und</div></button>
+                    <button onclick="selectAndLaunchBoat(9)" id="boat-card-9" class="p-2 rounded-xl border bg-slate-900 border-slate-800 text-left hover:border-fxgreen transition"><div class="font-bold text-white">Boat 9</div><div class="text-[8px] text-slate-400">Match</div></button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-950/90 backdrop-blur-md border-t border-slate-800/80 py-3 px-6 text-center text-xs text-slate-400 font-mono">
+        Ehalldart Global FX & Binary Scalping Terminal &copy; 2026 | Courtesy of Preston Mutugi
+    </footer>
+
+    <script src="derivApi.js?v=20261116"></script>
+    <script src="aiBotsEngine.js?v=20261116"></script>
+    <script src="app.js?v=20261116"></script>
+</body>
+</html>
